@@ -1,0 +1,17 @@
+{
+  "name": "sqlite-session-store",
+  "version": "1.0.0",
+  "description": "A node:sqlite session store to be used with express-session",
+  "main": "src/store.js",
+  "scripts": {
+    "test": "NODE_OPTIONS='--experimental-sqlite' vitest"
+  },
+  "keywords": [],
+  "author": "Vlad Ifrim",
+  "license": "Apache-2.0",
+  "type": "module",
+  "devDependencies": {
+    "express-session": "^1.18.1",
+    "vitest": "^3.1.2"
+  }
+}
