@@ -1,14 +1,31 @@
 {
-  "name": "sqlite-session-store",
+  "name": "node-sqlite-session-store",
   "version": "1.0.0",
   "description": "A node:sqlite session store to be used with express-session",
   "main": "src/store.js",
   "scripts": {
     "test": "NODE_OPTIONS='--experimental-sqlite' vitest"
   },
-  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ifrim/node-sqlite-session-store.git"
+  },
+  "keywords": [
+    "sqlite",
+    "session",
+    "express-session",
+    "node:sqlite",
+    "session store"
+  ],
   "author": "Vlad Ifrim",
   "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/ifrim/node-sqlite-session-store/issues"
+  },
+  "homepage": "https://github.com/ifrim/node-sqlite-session-store",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "devDependencies": {
     "express-session": "^1.18.1",
