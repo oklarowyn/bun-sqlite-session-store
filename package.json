@@ -1,6 +1,6 @@
 {
   "name": "node-sqlite-session-store",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A node:sqlite session store to be used with express-session",
   "main": "src/store.js",
   "scripts": {
