@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { DatabaseSync } from 'node:sqlite'
+import { DatabaseSync } from 'bun:sqlite'
 import { SQLiteStore } from '../src/store'
 
 describe('SQLiteStore', () => {

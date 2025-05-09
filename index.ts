@@ -1,15 +1,39 @@
 import { Store } from 'express-session';
+import { Database } from 'bun:sqlite';
+
+interface SessionData {
+  cookie: {
+    maxAge?: number;
+  };
+  [key: string]: any;
+}
+
+interface StoreOptions {
+  db: Database;
+  ttl?: number;
+  [key: string]: any;
+}
+
+interface SessionRow {
+  sid: string;
+  expires: number;
+  data: string;
+  count?: number;
+}
 
 export class SQLiteStore extends Store {
-  constructor({ db, ...options } = {}) {
+  private db: Database;
+  private ttl: number;
+
+  constructor(options: StoreOptions = { db: null }) {
     super(options);
 
     this.ttl = options.ttl ?? 86400; // Default TTL: 1 day in seconds
-    this.db = db;
+    this.db = options.db;
     this.initializeDb();
   }
 
-  initializeDb() {
+  private initializeDb(): void {
     try {
       this.db.exec(`
         CREATE TABLE IF NOT EXISTS sessions (
@@ -28,30 +52,30 @@ export class SQLiteStore extends Store {
     }
   }
 
-  get(sid, callback) {
+  get(sid: string, callback: (err?: any, session?: SessionData) => void): void {
     try {
-      let row = this.db
+      const row = this.db
         .prepare('SELECT * FROM sessions WHERE sid = ? AND expires > ?')
-        .get(sid, Date.now());
+        .get(sid, Date.now()) as SessionRow | undefined;
 
       if (!row) {
         return callback();
       }
 
-      let data = JSON.parse(row.data);
+      const data = JSON.parse(row.data) as SessionData;
       return callback(null, data);
     } catch (err) {
       return callback(err);
     }
   }
 
-  set(sid, session, callback) {
+  set(sid: string, session: SessionData, callback: (err?: any) => void): void {
     try {
-      let expires = typeof session.cookie.maxAge === 'number'
+      const expires = typeof session.cookie.maxAge === 'number'
         ? Date.now() + session.cookie.maxAge
         : Date.now() + (this.ttl * 1000);
 
-      let data = JSON.stringify(session);
+      const data = JSON.stringify(session);
 
       this.db
         .prepare(
@@ -66,7 +90,7 @@ export class SQLiteStore extends Store {
     }
   }
 
-  destroy(sid, callback) {
+  destroy(sid: string, callback: (err?: any) => void): void {
     try {
       this.db
         .prepare('DELETE FROM sessions WHERE sid = ?')
@@ -77,7 +101,7 @@ export class SQLiteStore extends Store {
     }
   }
 
-  clear(callback) {
+  clear(callback: (err?: any) => void): void {
     try {
       this.db.exec('DELETE FROM sessions');
       callback();
@@ -86,20 +110,20 @@ export class SQLiteStore extends Store {
     }
   }
 
-  length(callback) {
+  length(callback: (err?: any, length?: number) => void): void {
     try {
-      let row = this.db
+      const row = this.db
         .prepare('SELECT COUNT(*) AS count FROM sessions')
-        .get();
+        .get() as SessionRow;
       callback(null, row ? row.count : 0);
     } catch (err) {
       callback(err);
     }
   }
 
-  touch(sid, session, callback) {
+  touch(sid: string, session: SessionData, callback: (err?: any) => void): void {
     try {
-      let expires = typeof session.cookie.maxAge === 'number'
+      const expires = typeof session.cookie.maxAge === 'number'
         ? Date.now() + session.cookie.maxAge
         : Date.now() + (this.ttl * 1000);
 
@@ -113,7 +137,7 @@ export class SQLiteStore extends Store {
     }
   }
 
-  prune() {
+  prune(): void {
     try {
       this.db
         .prepare('DELETE FROM sessions WHERE expires < ?')
@@ -124,3 +148,5 @@ export class SQLiteStore extends Store {
     }
   }
 }
+
+export default SQLiteStore;

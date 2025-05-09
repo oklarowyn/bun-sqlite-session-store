@@ -1,22 +1,23 @@
-# node-sqlite-session-store
-A [node:sqlite](https://nodejs.org/api/sqlite.html) session store to be used with [express-session](https://github.com/expressjs/session)
+# bun-sqlite-session-store
+A [bun:sqlite](https://bun.sh/docs/api/sqlitel) session store to be used with [express-session](https://github.com/expressjs/session)
 
-[![npm version](https://badge.fury.io/js/node-sqlite-session-store.svg)](https://www.npmjs.com/package/node-sqlite-session-store)
+
 
 ## Installation
 
 ```bash
-npm install node-sqlite-session-store
+bun add bun-sqlite-session-store 
+bun init
 ```
 
 ## Usage
 
 ```js
 import session from 'express-session';
-import SQLiteStore from 'node-sqlite-session-store';
-import { DatabaseSync } from 'node:sqlite';
+import SQLiteStore from 'bun-sqlite-session-store';
+import { Database } from 'bun:sqlite';
 
-const db = new DatabaseSync('./path/to/db.sqlite');
+const db = new Database(":memory:"); // or new Database('path/to/your/database.db')
 
 app.use(session({
   store: new SQLiteStore({
