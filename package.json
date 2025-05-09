@@ -1,6 +1,6 @@
 {
   "name": "bun-sqlite-session-store",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A bun:sqlite session store to be used with express-session",
   "main": "index.ts",
   "scripts": {
@@ -28,9 +28,10 @@
   },
   "type": "module",
   "devDependencies": {
+    "@types/bun": "latest",
+    "express": "^5.1.0",
     "express-session": "^1.18.1",
-    "vitest": "^3.1.2",
-    "@types/bun": "latest"
+    "vitest": "^3.1.2"
   },
   "peerDependencies": {
     "typescript": "^5"

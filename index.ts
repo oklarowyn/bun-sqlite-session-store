@@ -1,10 +1,21 @@
-import { Store } from 'express-session';
+import { Store, SessionData as ExpressSessionData } from 'express-session';
 import { Database } from 'bun:sqlite';
 
-interface SessionData {
-  cookie: {
-    maxAge?: number;
-  };
+// Mise à jour de l'interface SessionData pour correspondre à express-session
+interface Cookie {
+  originalMaxAge: number | null;
+  maxAge?: number;
+  signed?: boolean;
+  expires?: Date | null;
+  httpOnly?: boolean;
+  path?: string;
+  domain?: string;
+  secure?: boolean | 'auto';
+  sameSite?: boolean | 'lax' | 'strict' | 'none';
+}
+
+interface SessionData extends ExpressSessionData {
+  cookie: Cookie;
   [key: string]: any;
 }
 
@@ -52,14 +63,14 @@ export class SQLiteStore extends Store {
     }
   }
 
-  get(sid: string, callback: (err?: any, session?: SessionData) => void): void {
+  get(sid: string, callback: (err: any, session?: SessionData | null) => void): void {
     try {
       const row = this.db
         .prepare('SELECT * FROM sessions WHERE sid = ? AND expires > ?')
         .get(sid, Date.now()) as SessionRow | undefined;
 
       if (!row) {
-        return callback();
+        return callback(null, null);
       }
 
       const data = JSON.parse(row.data) as SessionData;
