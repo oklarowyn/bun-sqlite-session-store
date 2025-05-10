@@ -56,8 +56,6 @@ export class SQLiteStore extends Store {
       `);
 
       this.db.exec('CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions (expires)');
-
-      console.log('SQLite session store initialized successfully');
     } catch (err) {
       console.error('Failed to initialize SQLite session store:', err);
     }
@@ -153,7 +151,6 @@ export class SQLiteStore extends Store {
       this.db
         .prepare('DELETE FROM sessions WHERE expires < ?')
         .run(Date.now());
-      console.log('Expired sessions pruned');
     } catch (err) {
       console.error('Failed to prune expired sessions:', err);
     }
